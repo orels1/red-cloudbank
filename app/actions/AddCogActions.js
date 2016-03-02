@@ -11,7 +11,8 @@ class FeedListActions {
             'updateName',
             'updateDescription',
             'updateCommands',
-            'updateScreenshots'
+            'updateScreenshots',
+            'updateGithubLink'
         );
     }
 

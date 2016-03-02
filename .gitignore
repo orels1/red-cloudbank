@@ -37,3 +37,6 @@ bower_components
 # Compiled files
 public/css/*
 public/js/*
+
+# Uploads
+public/uploads/*

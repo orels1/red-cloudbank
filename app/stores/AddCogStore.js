@@ -12,6 +12,8 @@ class AddFeedStore {
         this.description = '';
         this.commands = '';
         this.screenshots = [];
+        this.githubLink = '';
+        this.updates = [];
         this.helpBlock = '';
     }
 
@@ -37,6 +39,10 @@ class AddFeedStore {
 
     onUpdateScreenshots(event){
         this.screenshots = event.target.value;
+    }
+
+    onUpdateGithubLink(event){
+        this.githubLink = event.target.value;
     }
 
 }

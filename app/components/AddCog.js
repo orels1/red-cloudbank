@@ -96,6 +96,17 @@ class AddCog extends React.Component {
                                     onChange={AddCogActions.updateScreenshots}
                                 />
                             </div>
+                            <div className='form-group'>
+                                <label className='control-label'>Github link</label>
+                                <input
+                                    type='text'
+                                    className='form-control'
+                                    ref='githubLinkTextField'
+                                    placeholder="https://github.com/orels1/red-cloudbank"
+                                    value={this.state.githubLink}
+                                    onChange={AddCogActions.updateGithubLink}
+                                />
+                            </div>
                             <button type='submit' className='btn btn-primary'>Add Cog</button>
                         </form>
                     </div>
