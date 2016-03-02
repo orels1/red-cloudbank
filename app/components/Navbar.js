@@ -16,7 +16,6 @@ class Navbar extends React.Component {
 
     componentDidMount(){
         NavbarStore.listen(this.onChange);
-        NavbarActions.getCriminalsCount();
         NavbarActions.getUserInfo();
 
         $(document).ajaxStart(() => {
@@ -43,14 +42,10 @@ class Navbar extends React.Component {
 
         let searchQuery = this.state.searchQuery.trim();
 
-        if(searchQuery && searchQuery.substr(0,3) != 'id:'){
-            NavbarActions.findCriminal({
-                searchQuery: searchQuery,
-                searchForm: this.refs.topSearch,
-                history: this.props.history
-            })
-        }else if (searchQuery.substr(0,3) == 'id:'){
-            this.props.history.pushState(null, '/profiles/' + searchQuery.substr(3));
+        if(searchQuery){
+            /*
+            * TODO: Implement search here
+            * */
         }
     }
 
@@ -73,13 +68,13 @@ class Navbar extends React.Component {
                     </button>
                     <Link to='/' className='navbar-brand'>
                         <div className={ 'spinner '+this.state.ajaxAnimationClass}></div>
-                        MV2
+                        RED-Cloudbank
                     </Link>
                 </div>
                     <div className='navbar-collapse collapse' id='navbar'>
                         <form className="navbar-form navbar-left top-search" onsubmit={this.handleSubmit.bind(this)} role="search">
                             <div className="input-group">
-                                <input type="text" ref="topSearch" placeholder={this.state.totalCriminals + ' нарушителей'} value={this.state.searchQuery} onChange={NavbarActions.updateSearchQuery}  className="form-control" />
+                                <input type="text" ref="topSearch" placeholder="Search" value={this.state.searchQuery} onChange={NavbarActions.updateSearchQuery}  className="form-control" />
                                 <span className='input-group-btn'>
                                     <button type="submit"  onClick={this.handleSubmit.bind(this)} className="btn btn-default">Submit</button>
                                 </span>

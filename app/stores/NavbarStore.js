@@ -9,24 +9,23 @@ class NavbarStore {
         this.bindActions(NavbarActions);
         this.searchQuery = '';
         this.ajaxAnimationClass = '';
-        this.totalCriminals = 0;
         this.user = {
             auth: false,
-            username: 'moder',
+            username: 'red',
             id: 0
         };
     }
 
-    onFindCriminalSuccess(payload) {
-        payload.history.pushState(null, '/profiles/' + payload.knbId);
-    }
-
-    onFindCriminalFail(payload) {
-        payload.searchForm.classList.add('shake');
-        setTimeout(() => {
-            payload.searchForm.classList.remove('shake');
-        }, 1000);
-    }
+    //onFindCog(payload) {
+    //    payload.history.pushState(null, '/profiles/' + payload.knbId);
+    //}
+    //
+    //onFindCriminalFail(payload) {
+    //    payload.searchForm.classList.add('shake');
+    //    setTimeout(() => {
+    //        payload.searchForm.classList.remove('shake');
+    //    }, 1000);
+    //}
 
     onUpdateSearchQuery(event) {
         this.searchQuery = event.target.value;
@@ -34,14 +33,6 @@ class NavbarStore {
 
     onUpdateAjaxAnimation(className) {
         this.ajaxAnimationClass = className; //fadein or fadeout
-    }
-
-    onGetCriminalsCountSuccess(data) {
-        this.totalCriminals = data;
-    }
-
-    onGetCriminalsCountFail(jqXhr) {
-        toastr.error(jqXhr.responseText);
     }
 
     onGetUserInfoSuccess(data){

@@ -4,19 +4,19 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {isEqual} from 'underscore';
-import FeedListStore from '../stores/FeedListStore';
-import FeedListActions from '../actions/FeedListActions';
+import CogListStore from '../stores/CogListStore';
+import CogListActions from '../actions/CogListActions';
 
 class FeedList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = FeedListStore.getState();
+        this.state = CogListStore.getState();
         this.onChange = this.onChange.bind(this);
     }
 
     componentDidMount() {
-        FeedListStore.listen(this.onChange);
-        FeedListActions.getFeedItems(this.props.params);
+        CogListStore.listen(this.onChange);
+        CogListActions.getCogItems(this.props.params);
         $(document).ready(function(){
             $('.fancybox').fancybox({
                 arrows: false,
@@ -27,12 +27,12 @@ class FeedList extends React.Component {
     }
 
     componentWillUnmount() {
-        FeedListStore.unlisten(this.onChange);
+        CogListStore.unlisten(this.onChange);
     }
 
     componentDidUpdate(prevProps) {
         if (!isEqual(prevProps.params, this.props.params)) {
-            FeedListActions.getFeedItems(this.props.params);
+            CogListActions.getFeedItems(this.props.params);
         }
     }
 

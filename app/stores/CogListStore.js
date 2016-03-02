@@ -2,11 +2,11 @@
  * Created by orel- on 07/Dec/15.
  */
 import alt from '../alt';
-import FeedListActions from '../actions/FeedListActions.js';
+import CogListActions from '../actions/CogListActions.js';
 
-class FeedListStore {
+class CogListStore {
     constructor() {
-        this.bindActions(FeedListActions);
+        this.bindActions(CogListActions);
         this.feeds = [];
     }
 
@@ -19,4 +19,4 @@ class FeedListStore {
     }
 }
 
-export default alt.createStore(FeedListStore);
+export default alt.createStore(CogListStore);

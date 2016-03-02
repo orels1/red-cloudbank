@@ -6,7 +6,7 @@ import HomeStore from '../stores/HomeStore'
 import HomeActions from '../actions/HomeActions';
 import {Link} from 'react-router';
 
-import FeedList from './FeedList';
+import FeedList from './CogList';
 
 class Home extends React.Component {
     constructor(props) {

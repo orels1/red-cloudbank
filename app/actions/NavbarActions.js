@@ -9,37 +9,25 @@ class NavbarActions {
         this.generateActions(
             'updateSearchQuery',
             'updateAjaxAnimation',
-            'findCriminalSuccess',
-            'findCriminalFail',
-            'getCriminalsCountSuccess',
-            'getCriminalsCountFail',
+            'findCogSuccess',
+            'findCogFail',
             'getUserInfoSuccess',
             'getUserInfoFail'
         );
     }
 
-    findCriminal(payload){
+    findCog(payload){
         $.ajax({
-            url: '/api/feed/search',
+            url: '/api/cogs/search',
             data: { name: payload.searchQuery }
         })
             .done((data) => {
                 assign(payload, data);
-                this.actions.findCriminalSuccess(payload);
+                this.actions.findCogSuccess(payload);
             })
             .fail(() => {
-                this.actions.findCriminalFail(payload);
+                this.actions.findCogFail(payload);
             });
-    }
-
-    getCriminalsCount(){
-        $.ajax({ url: '/api/feed/count'})
-            .done((data) => {
-                this.actions.getCriminalsCountSuccess(data);
-            })
-            .fail((jqXhr) => {
-                this.actions.getCriminalsCountFail(jqXhr);
-            })
     }
 
     getUserInfo(){

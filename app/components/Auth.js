@@ -57,7 +57,7 @@ class Auth extends React.Component {
             <div className="col-md-4 col-md-offset-4">
                 <div className="panel panel-default loginForm">
                     <div className="panel-heading">
-                        <h2 className="text-center">{this.state.registration ?  'Become worthy' : 'Prove you\'re worthy'}</h2>
+                        <h2 className="text-center">{this.state.registration ?  'Start singing' : 'Sing again'}</h2>
                     </div>
                     <div ref="statusBlock" className={'statusBlock' + this.state.statusClasses}>{this.state.status}</div>
                     <div className="panel-body">

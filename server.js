@@ -19,6 +19,7 @@ moment.locale('ru');
 // DB
 var mongoose = require('mongoose');
 var User = require('./models/user');
+var Cog = require('./models/cog');
 var config = require('./config');
 
 var express = require('express');
@@ -65,6 +66,8 @@ var server = require('http').createServer(app);
 server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
+
+/* ACCOUNTS */
 
 /**
  * POST /api/login
@@ -118,6 +121,53 @@ app.get('/api/users/profile', function(req, res, next){
     }else{
         res.status(200).send({auth:true, username: req.user.username, userId: req.user._id});
     }
+});
+
+/* APP */
+
+/**
+ * GET /api/cogs/list
+ * Universal finder.
+ * Accepts limit as a payload parameter along with others
+ */
+app.get('/api/cogs/list', function(req, res, next) {
+    var params = req.query;
+
+    //Extract limit and delete it from request
+    var limit = params.limit;
+    delete params.limit;
+
+    //Extract sorting order and delete it from request
+    var order = params.order;
+    delete params.order;
+
+    Cog
+        .find(params)
+        .sort(order == undefined ? {time : -1} : {time: order})
+        .limit(limit == undefined ? 150 : parseInt(limit))
+        .exec(function(err, feedItems) {
+            if (err) return next(err);
+            res.send(feedItems);
+        });
+});
+
+/**
+ * POST /api/cogs/add
+ * Post to Cogs collection.
+ */
+app.post('/api/feed', function(req, res, next){
+    if(req.user == undefined){
+        res.status(400).send("You have to be authorized")
+    }else{
+        req.body.time = moment().utcOffset(3).format('x');
+        var cog = new Cog(req.body);
+        cog.save(function(err){
+            if(err) return next(err);
+
+            res.status(200).end();
+        });
+    }
+
 });
 
 
