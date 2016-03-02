@@ -1,0 +1,248 @@
+@import '../../bower_components/normalize.css/normalize'
+@import '../../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap'
+@import '../../bower_components/toastr/toastr.scss'
+@import '../../bower_components/magnific-popup/src/css/_settings'
+@import '../../bower_components/magnific-popup/src/css/main'
+@import '../../bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar'
+@import '../../bower_components/fancybox/source/jquery.fancybox'
+
+body
+  margin: 0
+  background: url('/img/bg-warm.jpg')
+
+.navbar
+  background: #fff
+  -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05)
+  -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05)
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05)
+  border-bottom: 1px solid #e5e5e5
+
+  .navbar-brand
+    font-weight: bold
+    text-transform: uppercase
+    color: #000
+    font-family: 'Roboto', sans-serif
+
+    span
+      position: relative
+      top: -3px
+      margin-left: 10px
+      display: inline-block
+
+
+  .navbar-form
+    button
+      height: 34px
+
+.liveFeed
+  width: 100%
+  height: 200px
+  background: #000
+  border-radius: 4px
+  overflow-y: scroll
+
+  .inner
+    height: 200px
+    width: 100%
+    padding: 15px
+    display: table-cell
+    vertical-align: bottom
+    font-family: 'Courier New', sans-serif
+    font-size: 12px
+    color: #999999
+
+.nameHistory
+  .dropdown
+    margin-top: 20px
+
+
+/* FeedList styles */
+
+.feedList
+  .position
+    font-size: 25px
+    font-weight: bold
+    color: rgba(0,0,0,0.4)
+    line-height: 40px
+
+  .thumb-lg
+    img
+      height: 40px
+      width: 40px
+      background: url('/img/no-ava.jpg')
+      background-size: contain
+      border: 1px solid rgba(0,0,0,0.8)
+      border-radius: 50px
+
+  .feedList-field
+    display: inline-block
+    position: relative
+    margin-left: 15px
+    min-width: 70px
+
+    small
+      position: absolute
+      top: 5px
+      left: 0
+      font-size: 11px
+
+    strong
+      line-height: 40px
+      position: relative
+      top: 8px
+
+/* ProfilePage styles */
+
+.permanent-req-btn, .permanent-approve-btn
+  .panel-body
+    line-height: 52px
+    cursor: pointer
+    font-size: 18px
+
+.permanent-req-btn
+  border: 4px solid #FFB84A !important
+  height: 88px
+
+.permanent-approve-btn
+  border: 4px solid #37E074 !important
+  height: 88px
+
+.permanent-req-btn.true, .permanent-req-btn.pending
+  border: 4px solid #e74c3c !important
+  height: 88px
+
+.permanent-approve-btn.false, .permanent-approve-btn.true
+  display: none
+
+/* WIP styles */
+.wip
+  min-height: 200px
+  background-image: url('/img/wip.gif')
+  background-repeat: no-repeat
+  background-position: center center
+
+/* Shake animation */
+@keyframes shake
+  0%, 100%
+    transform: translate3d(0, 0, 0)
+
+  10%, 30%, 50%, 70%, 90%
+    transform: translate3d(-10px, 0, 0)
+
+
+  20%, 40%, 60%, 80%
+    transform: translate3d(10px, 0, 0)
+
+.shake
+  background: rgba(234,97,83,0.4)
+
+
+.top-search
+  input[type="text"]
+    transition: all 300ms ease
+
+/* Spinner */
+
+.spinner
+  width: 20px
+  height: 20px
+  background-color: #333
+
+  display: inline-block
+  opacity: 0
+
+  transition: opacity 300ms ease
+
+  -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out
+  animation: sk-rotateplane 1.2s infinite ease-in-out
+
+.spinner.loading
+  opacity: 1
+
+@-webkit-keyframes sk-rotateplane
+  0%
+    -webkit-transform: perspective(120px)
+  50%
+    -webkit-transform: perspective(120px) rotateY(180deg)
+  100%
+    -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg)
+
+@keyframes sk-rotateplane
+  0%
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+  50%
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+  100%
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
+
+/* Bootstrap Restyles */
+.panel, .list-group, .liveFeed
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1)
+  border: none
+
+.list-group-item
+  border: none
+
+
+/* Login */
+.loginForm
+
+  .panel-heading
+    border: none
+    background: url('/img/login-overseer.jpg')
+
+  h2
+    margin: 50px auto 50px auto
+    color: #fff
+    font-weight: bold
+
+  input
+    margin-top: 10px
+    border: none
+    border-bottom: 3px solid
+    border-radius: 0
+    box-shadow: none
+    text-transform: uppercase
+
+  input:focus
+    box-shadow: none
+
+  .btn
+    width: 80%
+    margin: 20px auto
+    display: block
+    font-weight: bold
+    font-size: 12px
+    line-height: 20px
+    text-transform: uppercase
+
+  a
+    display: block
+    width: 100%
+    margin-bottom: 20px
+    text-transform: uppercase
+    font-size: 10px
+
+  .statusBlock.success
+    background: #2ecc71
+
+  .statusBlock.error
+    background: #e74c3c
+
+  .statusBlock.active
+    height: 40px
+    transition: height 300ms ease
+
+  .statusBlock
+    text-transform: uppercase
+    width: 100%
+    text-align: center
+    height: 0
+    line-height: 40px
+    overflow: hidden
+    color: #fff
+    font-weight: bold
+    transition: height 300ms ease
