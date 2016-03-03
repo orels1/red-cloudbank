@@ -4,6 +4,7 @@
 import React from 'react';
 import AddCogStore from '../stores/AddCogStore';
 import AddCogActions from '../actions/AddCogActions';
+import Dropzone from 'react-dropzone';
 
 class AddCog extends React.Component {
     constructor(props){
@@ -42,6 +43,10 @@ class AddCog extends React.Component {
             return toastr.error('Fill all the fields');
         }
 
+    }
+
+    onDrop(files){
+        console.log('Recieved files: ', files);
     }
 
     render(){
@@ -106,6 +111,11 @@ class AddCog extends React.Component {
                                     value={this.state.githubLink}
                                     onChange={AddCogActions.updateGithubLink}
                                 />
+                            </div>
+                            <div className="form-group">
+                                <Dropzone className="dropzone" onDrop={this.onDrop}>
+                                    <div>Drop a Cog!</div>
+                                </Dropzone>
                             </div>
                             <button type='submit' className='btn btn-primary'>Add Cog</button>
                         </form>
