@@ -14,6 +14,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var moment = require('moment');
+var multer = require('multer');
 moment.locale('ru');
 
 // DB
@@ -65,6 +66,55 @@ var server = require('http').createServer(app);
 
 server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
+});
+
+/* UPLOADS */
+function fileFilter (req, file, cb) {
+    // Check if is a .py or .zip file and is authorized
+    if(
+        (file.originalname.substr(-3) != ".py" && file.originalname.substr(-4) != ".zip")
+        || req.user == undefined
+    ){
+        cb(null, false);
+    }else{
+        cb(null, true);
+    }
+}
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads/')
+    },
+    filename: function (req, file, cb) {
+        var originalname = file.originalname;
+        var extension = originalname.split(".");
+
+        // Generate filename
+        var filename = file.fieldname + '-' + extension[0] + '-' + req.user.username + '-' + Date.now() + '.' + extension[extension.length-1];
+        cb(null, filename);
+    }
+});
+
+var uploading = multer({
+    storage: storage,
+    limits: {fileSize: 10000000},
+    fileFilter: fileFilter
+}).single('cog');
+
+/**
+ * POST /api/cogs/upload
+ * Uploads a cog file to /public/uploads
+ */
+app.post('/api/cogs/upload', function(req,res, next){
+    uploading(req, res, function(err){
+        if(err) next(err);
+
+        if(!req.file){
+            res.status(400).send("Wrong file or unauthorized");
+        }else{
+            res.status(200).send({filename: req.file.filename, cogName: req.file.originalname.split(".")[0]});
+        }
+    })
 });
 
 /* ACCOUNTS */
@@ -159,7 +209,7 @@ app.post('/api/feed', function(req, res, next){
     if(req.user == undefined){
         res.status(400).send("You have to be authorized")
     }else{
-        req.body.time = moment().utcOffset(3).format('x');
+        req.body.time = moment().utc().format('x');
         var cog = new Cog(req.body);
         cog.save(function(err){
             if(err) return next(err);

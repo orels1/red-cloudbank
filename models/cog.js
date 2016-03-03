@@ -2,11 +2,16 @@
  * Created by orel- on 03/Mar/16.
  */
 var mongoose = require('mongoose');
+var moment = require('moment');
 
 var cogSchema = new mongoose.Schema({
     name: String,
     author: String,
-    created: Number,
+    created: {type: Number, default: moment().format('x')},
+    initialFile: {
+        filename: String,
+        cogName: String
+    },
     updates: Array,
     githubLink: String,
     description: {type: String, default: "Custom cog for RED bot"},

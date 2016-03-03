@@ -3,6 +3,7 @@
  */
 import alt from '../alt';
 import AddFeedActions from '../actions/AddCogActions';
+import moment from 'moment';
 
 class AddFeedStore {
     constructor() {
@@ -11,17 +12,21 @@ class AddFeedStore {
         this.author = 'Red';
         this.description = '';
         this.commands = '';
+        this.initialFile = {
+            filename: '#',
+            cogName: 'untitled'
+        };
         this.screenshots = [];
         this.githubLink = '';
         this.updates = [];
         this.helpBlock = '';
     }
 
-    onAddFeedSuccess(successMessage){
+    onAddCogFeedSuccess(successMessage){
         this.helpBlock = successMessage;
     }
 
-    onAddFeedFail(errorMessage){
+    onAddCogFail(errorMessage){
         this.helpBlock = errorMessage;
     }
 
@@ -43,6 +48,16 @@ class AddFeedStore {
 
     onUpdateGithubLink(event){
         this.githubLink = event.target.value;
+    }
+
+    onUploadCogSuccess(data){
+        toastr.success('Cog file uploaded');
+        this.initialFile.filename = '/uploads/' + data.filename;
+        this.initialFile.cogName = data.cogName;
+    }
+
+    onUploadCogFail(jqXhr){
+        toastr.error(jqXhr.responseText);
     }
 
 }

@@ -5,6 +5,7 @@ import React from 'react';
 import AddCogStore from '../stores/AddCogStore';
 import AddCogActions from '../actions/AddCogActions';
 import Dropzone from 'react-dropzone';
+import {Link} from 'react-router';
 
 class AddCog extends React.Component {
     constructor(props){
@@ -33,6 +34,7 @@ class AddCog extends React.Component {
         cog.name = this.state.name.trim();
         cog.description = this.state.description;
         cog.commands = this.state.commands;
+        cog.initialFile = this.state.initialFile;
 
         //TODO: implement field parse here
         cog.screenshots = [this.state.screenshots];
@@ -46,7 +48,7 @@ class AddCog extends React.Component {
     }
 
     onDrop(files){
-        console.log('Recieved files: ', files);
+        AddCogActions.uploadCog(files);
     }
 
     render(){
@@ -116,6 +118,11 @@ class AddCog extends React.Component {
                                 <Dropzone className="dropzone" onDrop={this.onDrop}>
                                     <div>Drop a Cog!</div>
                                 </Dropzone>
+                                {this.state.initialFile.filename != '#' &&
+                                    <pre className="cogLink">
+                                        <Link to={this.state.initialFile.filename}>COG "{this.state.initialFile.cogName}"</Link>
+                                    </pre>
+                                }
                             </div>
                             <button type='submit' className='btn btn-primary'>Add Cog</button>
                         </form>
