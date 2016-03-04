@@ -34,10 +34,16 @@ class AddCog extends React.Component {
         cog.name = this.state.name.trim();
         cog.description = this.state.description;
         cog.commands = this.state.commands;
-        cog.initialFile = this.state.initialFile;
+        cog.githubLink = this.state.githubLink;
+
+        //Serialize inner objects
+        cog.initialFile = JSON.stringify({
+            filename: this.state.initialFile.filename,
+            cogName: this.state.initialFile.cogName
+        });
 
         //TODO: implement field parse here
-        cog.screenshots = [this.state.screenshots];
+        cog.screenshots = JSON.stringify([this.state.screenshots]);
 
         if(cog.name && cog.description){
             AddCogActions.addCog(cog);

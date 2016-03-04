@@ -22,6 +22,7 @@ class FeedListActions {
         $.ajax({
             type: 'POST',
             url: '/api/cogs/add',
+            dataType: 'json',
             data: cog
         })
             .done((data) => {

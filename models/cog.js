@@ -9,8 +9,8 @@ var cogSchema = new mongoose.Schema({
     author: String,
     created: {type: Number, default: moment().format('x')},
     initialFile: {
-        filename: String,
-        cogName: String
+        filename: {type: String, default: '#'},
+        cogName: {type: String, default: 'untitled'}
     },
     updates: Array,
     githubLink: String,

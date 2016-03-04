@@ -205,7 +205,11 @@ app.get('/api/cogs/list', function(req, res, next) {
  * POST /api/cogs/add
  * Post to Cogs collection.
  */
-app.post('/api/feed', function(req, res, next){
+app.post('/api/cogs/add', function(req, res, next){
+    // Parse inner objects
+    req.body.initialFile = JSON.parse(req.body.initialFile);
+    req.body.screenshots = JSON.parse(req.body.screenshots);
+
     if(req.user == undefined){
         res.status(400).send("You have to be authorized")
     }else{
