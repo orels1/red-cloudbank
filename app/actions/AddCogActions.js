@@ -26,10 +26,10 @@ class FeedListActions {
             data: cog
         })
             .done((data) => {
-                this.actions.addCogSuccess(data.message);
+                this.actions.addCogSuccess(data);
             })
             .fail((jqXhr) => {
-                this.actions.addCogFail(jqXhr.responseJson.message);
+                this.actions.addCogFail(jqXhr);
             });
     }
 

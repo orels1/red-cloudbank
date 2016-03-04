@@ -22,12 +22,12 @@ class AddFeedStore {
         this.helpBlock = '';
     }
 
-    onAddCogFeedSuccess(successMessage){
-        this.helpBlock = successMessage;
+    onAddCogFeedSuccess(data){
+        this.helpBlock = data;
     }
 
-    onAddCogFail(errorMessage){
-        this.helpBlock = errorMessage;
+    onAddCogFail(jqXhr){
+        this.helpBlock = jqXhr.responseText;
     }
 
     onUpdateName(event){
