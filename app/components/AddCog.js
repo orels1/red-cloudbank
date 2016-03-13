@@ -26,112 +26,18 @@ class AddCog extends React.Component {
         this.setState(state);
     }
 
-    handleSubmit(event){
-        event.preventDefault();
-
-        var cog = {};
-
-        cog.name = this.state.name.trim();
-        cog.description = this.state.description;
-        cog.commands = this.state.commands;
-        cog.githubLink = this.state.githubLink;
-
-        //Serialize inner objects
-        cog.initialFile = JSON.stringify({
-            filename: this.state.initialFile.filename,
-            cogName: this.state.initialFile.cogName
-        });
-
-        //TODO: implement field parse here
-        cog.screenshots = JSON.stringify([this.state.screenshots]);
-
-        if(cog.name && cog.description){
-            AddCogActions.addCog(cog);
-        }else{
-            return toastr.error('Fill all the fields');
-        }
-
-    }
-
-    onDrop(files){
-        AddCogActions.uploadCog(files);
-    }
-
     render(){
         return(
             <div className='col-md-6 col-md-offset-3'>
-                <div className='panel panel-default'>
-                    <div className='panel-heading'>New Cog</div>
-                    <div className='panel-body'>
-                        <form onSubmit={this.handleSubmit.bind(this)}>
-                            <div className='form-group'>
-                                <label className='control-label'>Cog name</label>
-                                <input
-                                    type='text'
-                                    className='form-control'
-                                    ref='nameTextField'
-                                    placeholder="Twitch Notifier"
-                                    value={this.state.name}
-                                    onChange={AddCogActions.updateName} autoFocus
-                                />
-                            </div>
-                            <div className='form-group'>
-                                <label className='control-label'>Cog description</label>
-                                <input
-                                    type='text'
-                                    className='form-control'
-                                    ref='descriptionTextField'
-                                    placeholder="Twitch notification cog"
-                                    value={this.state.description}
-                                    onChange={AddCogActions.updateDescription}
-                                />
-                            </div>
-                            <div className='form-group'>
-                                <label className='control-label'>Cog commands list</label>
-                                <textarea
-                                    rows="10"
-                                    className='form-control'
-                                    ref='commandsAvatarTextField'
-                                    placeholder="[p]Twitch alertMe"
-                                    value={this.state.commands}
-                                    onChange={AddCogActions.updateCommands}
-                                >
-                                </textarea>
-                            </div>
-                            <div className='form-group'>
-                                <label className='control-label'>Screenshot links</label>
-                                <input
-                                    type='text'
-                                    className='form-control'
-                                    ref='screenshotsTextField'
-                                    placeholder="http://puu.sh/eXhsmH2g"
-                                    value={this.state.screenshots}
-                                    onChange={AddCogActions.updateScreenshots}
-                                />
-                            </div>
-                            <div className='form-group'>
-                                <label className='control-label'>Github link</label>
-                                <input
-                                    type='text'
-                                    className='form-control'
-                                    ref='githubLinkTextField'
-                                    placeholder="https://github.com/orels1/red-cloudbank"
-                                    value={this.state.githubLink}
-                                    onChange={AddCogActions.updateGithubLink}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <Dropzone className="dropzone" onDrop={this.onDrop}>
-                                    <div>Drop a Cog!</div>
-                                </Dropzone>
-                                {this.state.initialFile.filename != '#' &&
-                                    <pre className="cogLink">
-                                        <Link to={this.state.initialFile.filename}>COG "{this.state.initialFile.cogName}"</Link>
-                                    </pre>
-                                }
-                            </div>
-                            <button type='submit' className='btn btn-primary'>Add Cog</button>
-                        </form>
+                <div className="panel panel-info">
+                    <div className="panel-heading">
+                        <div className="panel-title">How to add your cog</div>
+                    </div>
+                    <div className="panel-body">
+                        <p><b>Best way:</b> Make a pull request on <a href="https://github.com/Twentysix26/Red-Cogs"><b>github</b></a>, of course by cloning the repo and putting the folder you just created inside the "cogs" folder.</p>
+                        <p>Not so good way: Zip the folder and send it to the staff/dev on <a href="https://discord.gg/0k4npTwMvTo9TQoj"><b>the server</b></a>. We will take a look at it and publish it whenever we have time</p>
+                        <br />
+                        <p>All the requirements for user-created cogs can be found <a href="https://github.com/Twentysix26/Red-DiscordBot/wiki/Publishing-your-cog"><b>here</b></a></p>
                     </div>
                 </div>
             </div>

@@ -8,58 +8,7 @@ import moment from 'moment';
 class AddFeedStore {
     constructor() {
         this.bindActions(AddFeedActions);
-        this.name = '';
-        this.author = 'Red';
-        this.description = '';
-        this.commands = '';
-        this.initialFile = {
-            filename: '#',
-            cogName: 'untitled'
-        };
-        this.screenshots = [];
-        this.githubLink = '';
-        this.updates = [];
-        this.helpBlock = '';
     }
-
-    onAddCogFeedSuccess(data){
-        this.helpBlock = data;
-    }
-
-    onAddCogFail(jqXhr){
-        this.helpBlock = jqXhr.responseText;
-    }
-
-    onUpdateName(event){
-        this.name = event.target.value;
-    }
-
-    onUpdateDescription(event){
-        this.description = event.target.value;
-    }
-
-    onUpdateCommands(event){
-        this.commands = event.target.value;
-    }
-
-    onUpdateScreenshots(event){
-        this.screenshots = event.target.value;
-    }
-
-    onUpdateGithubLink(event){
-        this.githubLink = event.target.value;
-    }
-
-    onUploadCogSuccess(data){
-        toastr.success('Cog file uploaded');
-        this.initialFile.filename = '/uploads/' + data.filename;
-        this.initialFile.cogName = data.cogName;
-    }
-
-    onUploadCogFail(jqXhr){
-        toastr.error(jqXhr.responseText);
-    }
-
 }
 
 export default alt.createStore(AddFeedStore);
