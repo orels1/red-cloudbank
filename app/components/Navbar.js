@@ -84,17 +84,6 @@ class Navbar extends React.Component {
                             <li><Link to='/add'>Add</Link></li>
                             <li><Link to='/list'>List</Link></li>
                         </ul>
-                            {this.state.user.auth && // Check if authorized
-                                <ul className="nav navbar-nav navbar-right">
-                                    <li><Link to="/users/profile">{this.state.user.username}</Link></li>
-                                    <li><Link to="#" onClick={this.handleLogoutClick.bind(this)}>Logout</Link></li>
-                                </ul>
-                            }
-                            {!this.state.user.auth &&
-                            <ul className="nav navbar-nav navbar-right">
-                                <li><Link to='/login'>Login</Link></li>
-                            </ul>
-                            }
                     </div>
                 </div>
             </nav>
