@@ -43,10 +43,9 @@ class CogsList extends React.Component {
     render() {
         let cogsList = this.state.cogs.map((cogItem, index) => {
             return (
-                <div>
-                {cogItem.info && cogItem.author &&
+                <div key={cogItem._id}>
                     <div className="col-md-6">
-                        <div key={cogItem._id} className='panel panel-default animated fadeIn feedList'>
+                        <div className='panel panel-default animated fadeIn feedList'>
                             <div className='panel-heading'>
                                 <div className="feedList-field">
                                     <small>{cogItem.name}</small>
@@ -56,7 +55,7 @@ class CogsList extends React.Component {
                             <div className="panel-body">
                                 <div className="feedList-field">
                                     <small>Description</small>
-                                    <strong>{cogItem.info}</strong>
+                                    <strong>{cogItem.description}</strong>
                                 </div>
                             </div>
                             <div className="panel-footer">
@@ -66,7 +65,6 @@ class CogsList extends React.Component {
                             </div>
                         </div>
                     </div>
-                }
                 </div>
             );
         });
