@@ -16,6 +16,7 @@ var session = require('express-session');
 var moment = require('moment');
 var multer = require('multer');
 var request = require('request');
+var CronJob = require('cron').CronJob;
 moment.locale('ru');
 
 // DB
@@ -101,6 +102,9 @@ var uploading = multer({
     limits: {fileSize: 10000000},
     fileFilter: fileFilter
 }).single('cog');
+
+//TODO: refactor into middleware.
+
 
 /**
  * POST /api/cogs/upload
@@ -193,124 +197,114 @@ app.get('/api/cogs/list', function(req, res, next) {
     var order = params.order;
     delete params.order;
 
-    //Cog
-    //    .find(params)
-    //    .sort(order == undefined ? {time : -1} : {time: order})
-    //    .limit(limit == undefined ? 150 : parseInt(limit))
-    //    .exec(function(err, feedItems) {
-    //        if (err) return next(err);
-    //        res.send(feedItems);
-    //    });
+    Cog
+        .find(params)
+        .sort(order == undefined ? {time : -1} : {time: order})
+        .limit(limit == undefined ? 150 : parseInt(limit))
+        .exec(function(err, cogs) {
+            if (err) return next(err);
 
-    //Get RedCogs Repo on master branch
-    request({
-        method: 'GET',
-        url: 'https://api.github.com/repos/Twentysix26/Red-Cogs/branches/master',
-        headers: {
-            'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
-            'User-Agent' : 'Red-Cloudbank'
-        }
-    }, function(err, response, body){
-        if (err) {
-            //console.log(err);
-            next(err);
-        }
-        console.log('code ', response.statusCode);
+            res.status(200).send(cogs);
+        });
 
-        if(response.statusCode == 200){
-            //Parse Tree URL
+});
 
-            var tree = JSON.parse(body).commit.commit.tree.url;
-            console.log('tree ', tree);
+/**
+ * Custom cogs repo parser
+ * Due to heroku limitations have to make it locally
+ * */
+//TODO: Move to a middleware
+var parseCogsRepo = function(){
+    requestGitHub(config.repoUrl, function(data){
+        var tree = data.commit.commit.tree.url;
 
-            //Get tree contents
-            request({
-                url: tree,
-                headers: {
-                    'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
-                    'User-Agent' : 'Red-Cloudbank'
-                }
-            }, function(err, response, body){
-                if (err) next(err);
-                console.log('code in tree ', response.statusCode);
+        requestGitHub(tree, function(data){
+            var cogsTree = _.where(data.tree, {path: 'cogs'})[0].url;
 
-                if(response.statusCode == 200){
-                    var cogsTree = _.where(JSON.parse(body).tree, {path: 'cogs'})[0].url;
-                    console.log('cogsTree', cogsTree);
+            requestGitHub(cogsTree, function(data){
+                //Parse the list of cogs
+                //Put the together for insertion
 
-                    //Get inside the cogs
-                    request({
-                        url: cogsTree,
-                        headers: {
-                            'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
-                            'User-Agent' : 'Red-Cloudbank'
-                        }
-                    }, function(err, response, body){
-                        if (err) next(err);
+                var cogsList = [];
+                data.tree.forEach(function(element, i){
+                    cogsList.push({name: element.path, url: element.url});
+                });
 
-                        console.log('code in cogsTree ', response.statusCode);
+                //Parse individual cogs
+                cogsList.forEach(function(element, i){
+                    requestGitHub(element.url, function(data){
+                        //Grab the info.json file from the repo
+                        var infoLink = _.where(data.tree, {path: 'info.json'})[0].url;
 
-                        if(response.statusCode == 200){
-                            var cogsList = [];
-                            JSON.parse(body).tree.forEach(function(element, i){
-                                cogsList.push({name: element.path, url: element.url});
-                            });
+                        requestGitHub(infoLink, function(data){
+                            //GitHub returns a blob in base64, decode here
+                            var encoded = new Buffer(data.content.replace('\n',''), 'base64');
+                            var cogInfo = JSON.parse(encoded.toString());
 
-                            //Parse individual cogs
-                            console.log(cogsList);
+                            //Save to mongo
+                            Cog
+                                .findOne({name: element.name})
+                                .exec(function(err, cog){
+                                    //Find cog
+                                    //If not in DB - save
+                                    if(!cog){
+                                        var cog = new Cog({
+                                            name: element.name,
+                                            url: element.url,
+                                            fullName: cogInfo["NAME"],
+                                            author: cogInfo["AUTHOR"],
+                                            description: cogInfo["DESCRIPTION"]
+                                        });
 
-
-                            cogsList.forEach(function(element, i){
-                                request({
-                                    url: element.url,
-                                    headers: {
-                                        'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
-                                        'User-Agent' : 'Red-Cloudbank'
-                                    }
-                                }, function(err, response, body){
-                                    if(err) next(err);
-
-                                    if(response.statusCode == 200){
-                                        var infoLink = _.where(JSON.parse(body).tree, {path: 'info.json'})[0].url;
-                                        console.log('cog info.json url ', infoLink);
-
-                                        request({
-                                            url: infoLink,
-                                            headers: {
-                                                'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
-                                                'User-Agent' : 'Red-Cloudbank'
-                                            }
-                                        }, function(err, response, body){
-                                            if(err) next(err);
-
-                                            if(response.statusCode == 200){
-                                                var encoded = new Buffer(JSON.parse(body).content.replace('\n',''), 'base64');
-                                                var decoded = encoded.toString();
-
-                                                var cogInfo = JSON.parse(decoded);
-
-                                                console.log('cog info ', cogInfo);
-
-                                                cogsList[i].info = cogInfo["DESCRIPTION"];
-                                                cogsList[i].fullName = cogInfo["NAME"];
-                                                cogsList[i].author = cogInfo["AUTHOR"];
-
-                                                //Finally send the list with links and info
-                                                if(i == cogsList.length -1){
-                                                    res.status(200).send(cogsList);
-                                                }
-                                            }
-                                        })
+                                        cog.save(function(err){
+                                            if(err) return next(err);
+                                        });
                                     }
                                 });
-                            });
-                        }
-                    })
-                }
-            });
 
+
+                        })
+                    })
+                })
+
+            })
+        })
+    })
+};
+
+/** Github Api Request Constructor*/
+var requestGitHub = function(url, callback){
+    request({
+        method: 'GET',
+        url: url,
+        headers: {
+            'Authorization' : 'token ' + config.accessToken,
+            'User-Agent' : config.userAgent
         }
-    });
+    }, function(err, response, body){
+
+        if(response.statusCode == 200){
+            body = JSON.parse(body);
+            callback(body);
+        }
+    })
+};
+
+/**
+ * Parse github repo every 20 minutes
+ * */
+new CronJob('00 20 * * * *', function(){
+    parseCogsRepo();
+}, null, true, 'Europe/Moscow');
+
+/**
+ * GET /api/service/cogs/refresh
+ * Service-only api-hook for manual Cogs DB collection refresh
+ * */
+app.get('/api/service/cogs/refresh', function(req, res, next){
+    parseCogsRepo();
+
+    res.status(200).send("Cogs refresh started");
 });
 
 /**
