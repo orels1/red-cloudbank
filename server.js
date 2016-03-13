@@ -14,8 +14,6 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var moment = require('moment');
-var multer = require('multer');
-var request = require('request');
 var CronJob = require('cron').CronJob;
 moment.locale('ru');
 
@@ -69,39 +67,6 @@ var server = require('http').createServer(app);
 server.listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
-
-/* UPLOADS */
-function fileFilter (req, file, cb) {
-    // Check if is a .py or .zip file and is authorized
-    if(
-        (file.originalname.substr(-3) != ".py" && file.originalname.substr(-4) != ".zip")
-        || req.user == undefined
-    ){
-        cb(null, false);
-    }else{
-        cb(null, true);
-    }
-}
-
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/uploads/')
-    },
-    filename: function (req, file, cb) {
-        var originalname = file.originalname;
-        var extension = originalname.split(".");
-
-        // Generate filename
-        var filename = file.fieldname + '-' + extension[0] + '-' + req.user.username + '-' + Date.now() + '.' + extension[extension.length-1];
-        cb(null, filename);
-    }
-});
-
-var uploading = multer({
-    storage: storage,
-    limits: {fileSize: 10000000},
-    fileFilter: fileFilter
-}).single('cog');
 
 //TODO: refactor into middleware.
 
@@ -305,29 +270,6 @@ app.get('/api/service/cogs/refresh', function(req, res, next){
     parseCogsRepo();
 
     res.status(200).send("Cogs refresh started");
-});
-
-/**
- * POST /api/cogs/add
- * Post to Cogs collection.
- */
-app.post('/api/cogs/add', function(req, res, next){
-    // Parse inner objects
-    req.body.initialFile = JSON.parse(req.body.initialFile);
-    req.body.screenshots = JSON.parse(req.body.screenshots);
-
-    if(req.user == undefined){
-        res.status(400).send("You have to be authorized")
-    }else{
-        req.body.time = moment().utc().format('x');
-        var cog = new Cog(req.body);
-        cog.save(function(err){
-            if(err) return next(err);
-
-            res.status(200).end();
-        });
-    }
-
 });
 
 
