@@ -72,14 +72,14 @@ class Navbar extends React.Component {
                     </Link>
                 </div>
                     <div className='navbar-collapse collapse' id='navbar'>
-                        <form className="navbar-form navbar-left top-search" onsubmit={this.handleSubmit.bind(this)} role="search">
+                        {false && <form className="navbar-form navbar-left top-search" onsubmit={this.handleSubmit.bind(this)} role="search">
                             <div className="input-group">
                                 <input type="text" ref="topSearch" placeholder="Search" value={this.state.searchQuery} onChange={NavbarActions.updateSearchQuery}  className="form-control" />
                                 <span className='input-group-btn'>
                                     <button type="submit"  onClick={this.handleSubmit.bind(this)} className="btn btn-default">Submit</button>
                                 </span>
                             </div>
-                        </form>
+                        </form>}
                         <ul className='nav navbar-nav'>
                             <li><Link to='/add'>Add</Link></li>
                             <li><Link to='/list'>List</Link></li>
