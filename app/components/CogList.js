@@ -58,7 +58,7 @@ class CogsList extends React.Component {
                             <div className='panel-heading'>
                                 <div className="cogsList-field">
                                     <small>{cogItem.name}</small>
-                                    <strong>{cogItem.fullName}</strong>
+                                    <a href={cogItem.githubLink} target="_blank"><strong>{cogItem.fullName}</strong></a>
                                 </div>
                             </div>
                             <div className="panel-body">

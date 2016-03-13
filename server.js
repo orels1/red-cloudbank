@@ -179,7 +179,7 @@ app.get('/api/cogs/list', function(req, res, next) {
  * Custom cogs repo parser
  * App credentials in config.js
  * */
-var newParseCogsRepo = function(){
+var parseCogsRepo = function(){
 
     //Github client
     var client = github.client({
@@ -230,7 +230,7 @@ var newParseCogsRepo = function(){
  * Parse github repo every 20 minutes
  * */
 new CronJob('00 20 * * * *', function(){
-    //parseCogsRepo();
+    parseCogsRepo();
 }, null, true, 'Europe/Moscow');
 
 /**
@@ -241,15 +241,6 @@ app.get('/api/service/cogs/refresh', function(req, res, next){
     parseCogsRepo();
 
     res.status(200).send("Cogs refresh started");
-});
-
-/**
- * GET /api/service/cogs/get
- * */
-app.get('/api/service/cogs/get', function(req, res, next){
-    newParseCogsRepo();
-
-    res.status(200).send('Cogs requested');
 });
 
 
