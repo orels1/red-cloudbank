@@ -56,14 +56,20 @@ body
     margin-top: 20px
 
 
-/* FeedList styles */
+/* CogsList styles */
 
-.feedList
+.cogsList
   .position
     font-size: 25px
     font-weight: bold
     color: rgba(0,0,0,0.4)
     line-height: 40px
+
+  .panel-heading, .panel-footer
+    background-color: #fff
+
+  .panel-body
+    background-color: #f5f5f5
 
   .thumb-lg
     img
@@ -74,10 +80,9 @@ body
       border: 1px solid rgba(0,0,0,0.8)
       border-radius: 50px
 
-  .feedList-field
+  .cogsList-field
     display: inline-block
     position: relative
-    margin-left: 15px
     min-width: 70px
 
     small
@@ -266,3 +271,10 @@ body
 
 .cogLink
   font-size: 16px
+
+
+/* Modal */
+.Modal__Bootstrap.modal-dialog
+  border: none !important
+  background: none !important
+  overflow: visible !important

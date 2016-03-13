@@ -8,6 +8,8 @@ class CogListStore {
     constructor() {
         this.bindActions(CogListActions);
         this.cogs = [];
+        this.modalIsOpen = false;
+        this.cogToInstall = '';
     }
 
     onGetCogsSuccess(data) {
@@ -16,6 +18,16 @@ class CogListStore {
 
     onGetCogsFail(jqXhr) {
         toastr.error(jqXhr.responseText);
+    }
+
+    onOpenModal(name){
+        this.modalIsOpen = true;
+        this.cogToInstall = name;
+    }
+
+    onCloseModal(){
+        this.modalIsOpen = false;
+        this.cogToInstall = '';
     }
 }
 

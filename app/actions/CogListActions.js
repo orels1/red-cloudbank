@@ -7,7 +7,9 @@ class CogListActions {
     constructor() {
         this.generateActions(
             'getCogsSuccess',
-            'getCogsFail'
+            'getCogsFail',
+            'openModal',
+            'closeModal'
         );
     }
 
