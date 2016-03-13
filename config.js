@@ -4,6 +4,8 @@
 module.exports = {
     database: process.env.MONGOLAB_URI || 'localhost/red-cloudbank',
     userAgent: 'Red-Cloudbank',
-    accessToken: '1f568f37237015633f9d17e9eee15a0e7671b636',
-    repoUrl: 'https://api.github.com/repos/Twentysix26/Red-Cogs/branches/master'
+    repo: 'Twentysix26/Red-Cogs',
+    masterUrl: 'https://github.com/Twentysix26/Red-Cogs/tree/master/cogs/',
+    appId: '09279b31e7b0103df5ea',
+    appSecret: '813e69f64f5ba0d6fa483ada4deb9b034d5b9c8f'
 };

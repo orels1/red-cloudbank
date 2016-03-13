@@ -15,6 +15,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var moment = require('moment');
 var CronJob = require('cron').CronJob;
+var github = require('octonode');
 moment.locale('ru');
 
 // DB
@@ -176,90 +177,60 @@ app.get('/api/cogs/list', function(req, res, next) {
 
 /**
  * Custom cogs repo parser
- * Due to heroku limitations have to make it locally
+ * App credentials in config.js
  * */
-//TODO: Move to a middleware
-var parseCogsRepo = function(){
-    requestGitHub(config.repoUrl, function(data){
-        var tree = data.commit.commit.tree.url;
+var newParseCogsRepo = function(){
 
-        requestGitHub(tree, function(data){
-            var cogsTree = _.where(data.tree, {path: 'cogs'})[0].url;
+    //Github client
+    var client = github.client({
+        id: config.appId,
+        secret: config.appSecret
+    });
 
-            requestGitHub(cogsTree, function(data){
-                //Parse the list of cogs
-                //Put the together for insertion
+    //Github repo
+    var ghrepo = client.repo(config.repo);
 
-                var cogsList = [];
-                data.tree.forEach(function(element, i){
-                    cogsList.push({name: element.path, url: element.url});
-                });
+    ghrepo.contents('cogs', function(err, data){
+        data.forEach(function(element, i){
+            ghrepo.contents(element.path, function(err, data){
+                var infoHex = _.where(data, {name : 'info.json'})[0].sha;
+                ghrepo.blob(infoHex, function(err, data){
+                    var encoded = new Buffer(data.content.replace('\n',''), 'base64');
+                    var cogInfo = JSON.parse(encoded.toString());
 
-                //Parse individual cogs
-                cogsList.forEach(function(element, i){
-                    requestGitHub(element.url, function(data){
-                        //Grab the info.json file from the repo
-                        var infoLink = _.where(data.tree, {path: 'info.json'})[0].url;
-
-                        requestGitHub(infoLink, function(data){
-                            //GitHub returns a blob in base64, decode here
-                            var encoded = new Buffer(data.content.replace('\n',''), 'base64');
-                            var cogInfo = JSON.parse(encoded.toString());
-
-                            //Save to mongo
-                            Cog
-                                .findOne({name: element.name})
-                                .exec(function(err, cog){
-                                    //Find cog
-                                    //If not in DB - save
-                                    if(!cog){
-                                        var cog = new Cog({
-                                            name: element.name,
-                                            url: element.url,
-                                            fullName: cogInfo["NAME"],
-                                            author: cogInfo["AUTHOR"],
-                                            description: cogInfo["DESCRIPTION"]
-                                        });
-
-                                        cog.save(function(err){
-                                            if(err) return next(err);
-                                        });
-                                    }
+                    //Save to mongo
+                    Cog
+                        .findOne({name: element.name})
+                        .exec(function(err, cog){
+                            //Find cog
+                            //If not in DB - save
+                            if(!cog){
+                                var cog = new Cog({
+                                    name: element.name,
+                                    githubLink: config.masterUrl + element.name,
+                                    fullName: cogInfo["NAME"],
+                                    author: cogInfo["AUTHOR"],
+                                    description: cogInfo["DESCRIPTION"]
                                 });
 
-
-                        })
-                    })
+                                cog.save(function(err){
+                                    if(err) return next(err);
+                                });
+                            }
+                        });
                 })
-
-            })
+            });
         })
-    })
-};
+    });
 
-/** Github Api Request Constructor*/
-var requestGitHub = function(url, callback){
-    request({
-        method: 'GET',
-        url: url,
-        headers: {
-            'Authorization' : 'token ' + config.accessToken,
-            'User-Agent' : config.userAgent
-        }
-    }, function(err, response, body){
 
-        if(response.statusCode == 200){
-            body = JSON.parse(body);
-            callback(body);
-        }
-    })
 };
 
 /**
  * Parse github repo every 20 minutes
  * */
 new CronJob('00 20 * * * *', function(){
-    parseCogsRepo();
+    //parseCogsRepo();
 }, null, true, 'Europe/Moscow');
 
 /**
@@ -270,6 +241,15 @@ app.get('/api/service/cogs/refresh', function(req, res, next){
     parseCogsRepo();
 
     res.status(200).send("Cogs refresh started");
+});
+
+/**
+ * GET /api/service/cogs/get
+ * */
+app.get('/api/service/cogs/get', function(req, res, next){
+    newParseCogsRepo();
+
+    res.status(200).send('Cogs requested');
 });
 
 
