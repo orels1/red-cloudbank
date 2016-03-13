@@ -6,14 +6,14 @@ import {Route} from 'react-router';
 import App from './components/App';
 import Home from './components/Home';
 import CogList from './components/CogList';
-import AddFeed from './components/AddCog';
+import AddCog from './components/AddCog';
 import Auth from './components/Auth';
 
 
 export default (
     <Route component={App}>
         <Route path='/' component={Home} />
-        <Route path='/add' component={AddFeed} />
+        <Route path='/add' component={AddCog} />
         <Route path='/list' component={CogList} />
         <Route path='/login' component={Auth} />
     </Route>

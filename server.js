@@ -15,6 +15,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var moment = require('moment');
 var multer = require('multer');
+var request = require('request');
 moment.locale('ru');
 
 // DB
@@ -179,6 +180,7 @@ app.get('/api/users/profile', function(req, res, next){
  * GET /api/cogs/list
  * Universal finder.
  * Accepts limit as a payload parameter along with others
+ * Ditching old db - parses git OTF
  */
 app.get('/api/cogs/list', function(req, res, next) {
     var params = req.query;
@@ -191,14 +193,124 @@ app.get('/api/cogs/list', function(req, res, next) {
     var order = params.order;
     delete params.order;
 
-    Cog
-        .find(params)
-        .sort(order == undefined ? {time : -1} : {time: order})
-        .limit(limit == undefined ? 150 : parseInt(limit))
-        .exec(function(err, feedItems) {
-            if (err) return next(err);
-            res.send(feedItems);
-        });
+    //Cog
+    //    .find(params)
+    //    .sort(order == undefined ? {time : -1} : {time: order})
+    //    .limit(limit == undefined ? 150 : parseInt(limit))
+    //    .exec(function(err, feedItems) {
+    //        if (err) return next(err);
+    //        res.send(feedItems);
+    //    });
+
+    //Get RedCogs Repo on master branch
+    request({
+        method: 'GET',
+        url: 'https://api.github.com/repos/Twentysix26/Red-Cogs/branches/master',
+        headers: {
+            'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
+            'User-Agent' : 'Red-Cloudbank'
+        }
+    }, function(err, response, body){
+        if (err) {
+            //console.log(err);
+            next(err);
+        }
+        console.log('code ', response.statusCode);
+
+        if(response.statusCode == 200){
+            //Parse Tree URL
+
+            var tree = JSON.parse(body).commit.commit.tree.url;
+            console.log('tree ', tree);
+
+            //Get tree contents
+            request({
+                url: tree,
+                headers: {
+                    'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
+                    'User-Agent' : 'Red-Cloudbank'
+                }
+            }, function(err, response, body){
+                if (err) next(err);
+                console.log('code in tree ', response.statusCode);
+
+                if(response.statusCode == 200){
+                    var cogsTree = _.where(JSON.parse(body).tree, {path: 'cogs'})[0].url;
+                    console.log('cogsTree', cogsTree);
+
+                    //Get inside the cogs
+                    request({
+                        url: cogsTree,
+                        headers: {
+                            'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
+                            'User-Agent' : 'Red-Cloudbank'
+                        }
+                    }, function(err, response, body){
+                        if (err) next(err);
+
+                        console.log('code in cogsTree ', response.statusCode);
+
+                        if(response.statusCode == 200){
+                            var cogsList = [];
+                            JSON.parse(body).tree.forEach(function(element, i){
+                                cogsList.push({name: element.path, url: element.url});
+                            });
+
+                            //Parse individual cogs
+                            console.log(cogsList);
+
+
+                            cogsList.forEach(function(element, i){
+                                request({
+                                    url: element.url,
+                                    headers: {
+                                        'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
+                                        'User-Agent' : 'Red-Cloudbank'
+                                    }
+                                }, function(err, response, body){
+                                    if(err) next(err);
+
+                                    if(response.statusCode == 200){
+                                        var infoLink = _.where(JSON.parse(body).tree, {path: 'info.json'})[0].url;
+                                        console.log('cog info.json url ', infoLink);
+
+                                        request({
+                                            url: infoLink,
+                                            headers: {
+                                                'Authorization' : 'token 34efc5992e332ea6f483aeba22add932f467902b',
+                                                'User-Agent' : 'Red-Cloudbank'
+                                            }
+                                        }, function(err, response, body){
+                                            if(err) next(err);
+
+                                            if(response.statusCode == 200){
+                                                var encoded = new Buffer(JSON.parse(body).content.replace('\n',''), 'base64');
+                                                var decoded = encoded.toString();
+
+                                                var cogInfo = JSON.parse(decoded);
+
+                                                console.log('cog info ', cogInfo);
+
+                                                cogsList[i].info = cogInfo["DESCRIPTION"];
+                                                cogsList[i].fullName = cogInfo["NAME"];
+                                                cogsList[i].author = cogInfo["AUTHOR"];
+
+                                                //Finally send the list with links and info
+                                                if(i == cogsList.length -1){
+                                                    res.status(200).send(cogsList);
+                                                }
+                                            }
+                                        })
+                                    }
+                                });
+                            });
+                        }
+                    })
+                }
+            });
+
+        }
+    });
 });
 
 /**

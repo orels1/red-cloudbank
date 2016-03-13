@@ -7,14 +7,14 @@ import CogListActions from '../actions/CogListActions.js';
 class CogListStore {
     constructor() {
         this.bindActions(CogListActions);
-        this.feeds = [];
+        this.cogs = [];
     }
 
-    onGetFeedSuccess(data) {
-        this.feeds = data;
+    onGetCogsSuccess(data) {
+        this.cogs = data;
     }
 
-    onGetFeedFail(jqXhr) {
+    onGetCogsFail(jqXhr) {
         toastr.error(jqXhr.responseText);
     }
 }

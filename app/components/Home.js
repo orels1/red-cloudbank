@@ -6,7 +6,7 @@ import HomeStore from '../stores/HomeStore'
 import HomeActions from '../actions/HomeActions';
 import {Link} from 'react-router';
 
-import FeedList from './CogList';
+import CogsList from './CogList';
 
 class Home extends React.Component {
     constructor(props) {
@@ -44,7 +44,7 @@ class Home extends React.Component {
                 <div className="clearfix"></div>
 
                 <div className="col-md-12">
-                    <FeedList params={{limit:3}} />
+                    <CogsList params={{limit:3}} />
                 </div>
             </div>
         );

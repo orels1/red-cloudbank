@@ -7,7 +7,7 @@ import {isEqual} from 'underscore';
 import CogListStore from '../stores/CogListStore';
 import CogListActions from '../actions/CogListActions';
 
-class FeedList extends React.Component {
+class CogsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = CogListStore.getState();
@@ -41,54 +41,42 @@ class FeedList extends React.Component {
     }
 
     render() {
-        let feedList = this.state.feeds.map((feedItem, index) => {
+        let cogsList = this.state.cogs.map((cogItem, index) => {
             return (
-                <div key={feedItem._id} className='list-group-item animated fadeIn feedList'>
-                    <div className='media'>
-                        <span className='position pull-left'>{index + 1}</span>
-                        {!this.props.compact && //check if has to be compact
-                            <div className='pull-left thumb-lg'>
-                                <Link to={'/profiles/' + feedItem.knbId}>
-                                    <img className='media-object' src={
-                                        (feedItem.targetUserAvatar.indexOf(".jpg") == -1 ? "/img/no-ava.jpg" : feedItem.targetUserAvatar)
-                                    } />
-                                </Link>
-                            </div>
-                        }
-                        <div className='media-body'>
-                            {!this.props.compact && //check if has to be compact
+                <div>
+                {cogItem.info && cogItem.author &&
+                    <div className="col-md-6">
+                        <div key={cogItem._id} className='panel panel-default animated fadeIn feedList'>
+                            <div className='panel-heading'>
                                 <div className="feedList-field">
-                                    <small>Ник</small>
-                                    <strong><Link to={'/profiles/' + feedItem.knbId}>{feedItem.targetUser}</Link></strong>
+                                    <small>{cogItem.name}</small>
+                                    <strong><Link to={'/profiles/' + cogItem.knbId}>{cogItem.fullName}</Link></strong>
                                 </div>
-                            }
-                            <div className="feedList-field">
-                                <small>Причина</small>
-                                <strong>
-                                    {feedItem.reason.length <= 30 ? feedItem.reason : feedItem.reason.slice(0,30) + '... '}
-                                    {feedItem.reason.length > 30 &&
-                                        <a href="#"> показать </a>
-                                    }
-                                </strong>
                             </div>
-                            <div className="feedList-field"><small>Действие</small> <strong>{feedItem.action}</strong></div>
-                            <div className="feedList-field"><small>Модер</small> <strong>{feedItem.moder}</strong></div>
-                            <div className="feedList-field">
-                                <small>Скрин:</small>
-                                <strong><a className="fancybox" href={feedItem.scrUrl ? feedItem.scrUrl : '#'}>показать</a></strong>
+                            <div className="panel-body">
+                                <div className="feedList-field">
+                                    <small>Description</small>
+                                    <strong>{cogItem.info}</strong>
+                                </div>
+                            </div>
+                            <div className="panel-footer">
+                                <div className="feedList-field">
+                                    <small>Author</small>
+                                    <strong>{cogItem.author}</strong></div>
                             </div>
                         </div>
                     </div>
+                }
                 </div>
             );
         });
 
         return (
-                <div className='list-group'>
-                    {feedList}
+                <div>
+                    {cogsList}
                 </div>
         );
     }
 }
 
-export default FeedList;
+export default CogsList;

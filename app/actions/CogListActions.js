@@ -6,8 +6,8 @@ import alt from '../alt';
 class CogListActions {
     constructor() {
         this.generateActions(
-            'getCogSuccess',
-            'getCogFail'
+            'getCogsSuccess',
+            'getCogsFail'
         );
     }
 
@@ -18,7 +18,7 @@ class CogListActions {
         };
 
         if (payload.cogId){
-            params.knbId = payload.cogId;
+            params.cogId = payload.cogId;
         }
 
         if(payload.limit){
@@ -31,10 +31,10 @@ class CogListActions {
 
         $.ajax({ url: url, data: params })
             .done((data) => {
-                this.actions.getCogSuccess(data);
+                this.actions.getCogsSuccess(data);
             })
             .fail((jqXhr) => {
-                this.actions.getCogFail(jqXhr);
+                this.actions.getCogsFail(jqXhr);
             });
     }
 }
