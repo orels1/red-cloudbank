@@ -1,7 +1,7 @@
 {
   "name": "red-cloudbank",
   "description": "Custom cogs DB for RED discord bot",
-  "version": "0.0.1",
+  "version": "0.9",
   "repository": {
     "type": "git",
     "url": "https://github.com/orels"
